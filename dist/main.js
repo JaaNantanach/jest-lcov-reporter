@@ -23159,7 +23159,7 @@ async function main$1() {
 		);
 
 		if (existingComment) {
-			await updateGitHubComment(existingComment.id);
+			if (isPullRequest) await updateGitHubComment(existingComment.id);
 			return
 		}
 	}
