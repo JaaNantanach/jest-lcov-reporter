@@ -23108,9 +23108,6 @@ async function main$1() {
 				issue_number: github_1.payload.pull_request.number,
 			});
 		} else {
-			console.log("github_1.commit_sha", github_1.sha)
-			console.log("github_1", JSON.stringify(github_1))
-			console.log("github_2", JSON.stringify(github_2))
 			return githubClient.repos.createCommitComment({
 				repo: github_1.repo.repo,
 				owner: github_1.repo.owner,
@@ -23165,6 +23162,10 @@ async function main$1() {
 	}
 
 	await createGitHubComment();
+
+	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
+	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
+	fs.writeFileSync(pathSummary, "test summary");
 }
 
 var index = main$1().catch(function (err) {
