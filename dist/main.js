@@ -23078,7 +23078,7 @@ async function main$1() {
 		console.log(`No coverage report found at '${baseFile}', ignoring...`);
 	}
 
-	// const isPullRequest = Boolean(github_1.payload.pull_request);
+	const isPullRequest = Boolean(github_1.payload.pull_request);
 	// if (!isPullRequest) {
 	// 	console.log("Not a pull request, skipping...");
 	// 	return
@@ -23087,7 +23087,7 @@ async function main$1() {
 	const options = {
 		name,
 		repository: github_1.payload.repository.full_name,
-		commit: github_1.payload.pull_request.head.sha,
+		commit: isPullRequest ? github_1.payload.pull_request.head.sha : 'github_1.sha',
 		prefix: `${process.env.GITHUB_WORKSPACE}/`,
 		head: github_1.payload.pull_request.head.ref,
 		base: github_1.payload.pull_request.base.ref,
