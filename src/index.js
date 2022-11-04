@@ -83,7 +83,7 @@ async function main() {
 				issue_number: context.payload.pull_request.number,
 			});
 		} else {
-			issueComments = await githubClient.repos.listCommitComments({
+			issueComments = await githubClient.repos.listCommentsForCommit({
 				repo: context.repo.repo,
 				owner: context.repo.owner,
 				number: context.issue.number,
