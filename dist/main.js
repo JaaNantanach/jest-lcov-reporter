@@ -23089,8 +23089,8 @@ async function main$1() {
 		repository: github_1.payload.repository.full_name,
 		commit: isPullRequest ? github_1.payload.pull_request.head.sha : 'github_1.sha',
 		prefix: `${process.env.GITHUB_WORKSPACE}/`,
-		head: github_1.payload.pull_request.head.ref,
-		base: github_1.payload.pull_request.base.ref,
+		head: isPullRequest ? github_1.payload.pull_request.head.ref : "",
+		base: isPullRequest ? github_1.payload.pull_request.base.ref : "",
 		workflowName: process.env.GITHUB_WORKFLOW,
 	};
 
@@ -23100,13 +23100,12 @@ async function main$1() {
 	const githubClient = new github_2(token);
 
 	const createGitHubComment = () => {
-		const prNumber = github_1.payload.pull_request.number
-		if (prNumber) {
+		if (isPullRequest) {
 			return githubClient.issues.createComment({
 				repo: github_1.repo.repo,
 				owner: github_1.repo.owner,
 				body,
-				issue_number: prNumber,
+				issue_number: github_1.payload.pull_request.number,
 			});
 		} else {
 			return githubClient.repos.createCommitComment({
