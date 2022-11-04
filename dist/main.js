@@ -23108,6 +23108,9 @@ async function main$1() {
 				issue_number: github_1.payload.pull_request.number,
 			});
 		} else {
+			console.log("github_1.commit_sha", github_1.commit_sha)
+			console.log("github_1", JSON.stringify(github_1))
+			console.log("github_2", JSON.stringify(github_2))
 			return githubClient.repos.createCommitComment({
 				repo: github_1.repo.repo,
 				owner: github_1.repo.owner,
