@@ -25,7 +25,8 @@ function heading(name) {
 function comment(lcov, table, options) {
 	return fragment(
 		heading(options.name),
-		p(`Coverage after merging ${b(options.head)} into ${b(options.base)}`),
+		options.isPullRequest ? p(`Coverage after merging ${b(options.head)} into ${b(options.base)}`)
+			: p(`Coverage on commit ${b(options.commitSHA)} (${b(options.commitMessage)})`),
 		table,
 		"\n\n",
 		details(summary("Coverage Report"), tabulate(lcov, options)),

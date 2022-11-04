@@ -330,7 +330,8 @@ function heading(name) {
 function comment(lcov, table, options) {
 	return fragment(
 		heading(options.name),
-		p(`Coverage after merging ${b(options.head)} into ${b(options.base)}`),
+		options.isPullRequest ? p(`Coverage after merging ${b(options.head)} into ${b(options.base)}`)
+			: p(`Coverage on commit ${b(options.commitSHA)} (${b(options.commitMessage)})`),
 		table,
 		"\n\n",
 		details(summary$1("Coverage Report"), tabulate(lcov, options)),
@@ -87374,7 +87375,7 @@ async function main() {
 
 	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"]);
 	const pathSummary = process.env["GITHUB_STEP_SUMMARY"];
-	require$$0.promises.writeFileSync(pathSummary, body);
+	await require$$0.promises.writeFile(pathSummary, body);
 
 	await githubClient.checks.create({
 		repo: context.repo.repo,

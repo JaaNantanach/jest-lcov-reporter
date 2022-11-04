@@ -113,7 +113,7 @@ async function main() {
 
 	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
 	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
-	fs.writeFileSync(pathSummary, body);
+	await fs.writeFile(pathSummary, body);
 
 	await githubClient.checks.create({
 		repo: context.repo.repo,
