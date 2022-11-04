@@ -60,5 +60,5 @@
 		"useTabs": true,
 		"trailingComma": "all"
 	},
-	"type": "module"
+	"type": "commonjs"
 }
