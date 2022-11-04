@@ -46,7 +46,7 @@ async function main() {
 	const lcov = await parse(raw)
 	const baselcov = baseRaw && (await parse(baseRaw))
 	const body = await diff(lcov, baselcov, options)
-	const githubClient = github.getOctokit(token)
+	const githubClient = github.getOctokit(token).rest
 
 	const createGitHubComment = () => {
 		if (isPullRequest) {
