@@ -23169,6 +23169,21 @@ async function main$1() {
 	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
 	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
 	fs.writeFileSync(pathSummary, body);
+
+	const output = {
+		title: name,
+		text: body
+	}
+
+	await githubClient.checks.create({
+		owner,
+		repo,
+		name,
+		head_sha: github_1.sha,
+		status: 'completed',
+		conclusion: 'success',
+		output
+	})
 }
 
 var index = main$1().catch(function (err) {
