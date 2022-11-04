@@ -23019,7 +23019,7 @@ function comment(lcov, table, options) {
 	return fragment(
 		heading(options.name),
 		options.isPullRequest ? p(`Coverage after merging ${b(options.head)} into ${b(options.base)}`)
-			: p(`Coverage on commit ${b(options.commit)} (${b(options.commitMessage)})`),
+			: p(`Coverage on commit ${b(options.commitSHA)} (${b(options.commitMessage)})`),
 		table,
 		"\n\n",
 		details(summary("Coverage Report"), tabulate(lcov, options)),
@@ -23168,7 +23168,7 @@ async function main$1() {
 
 	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
 	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
-	fs.writeFileSync(pathSummary, "test summary");
+	fs.writeFileSync(pathSummary, body);
 }
 
 var index = main$1().catch(function (err) {
