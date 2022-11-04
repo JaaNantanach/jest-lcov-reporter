@@ -87268,6 +87268,7 @@ getOctokit_1 = github.getOctokit = getOctokit;
 const context = context$1;
 
 async function main() {
+	console.log(JSON.stringify(context));
 	const token = coreExports.getInput("github-token");
 	const name = coreExports.getInput("name");
 	const lcovFile = coreExports.getInput("lcov-file") || "./coverage/lcov.info";

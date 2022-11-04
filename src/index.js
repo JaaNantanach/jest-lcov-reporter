@@ -7,6 +7,7 @@ import * as github from '@actions/github'
 const context = github.context;
 
 async function main() {
+	console.log(JSON.stringify(context))
 	const token = core.getInput("github-token")
 	const name = core.getInput("name")
 	const lcovFile = core.getInput("lcov-file") || "./coverage/lcov.info"
