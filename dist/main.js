@@ -23112,7 +23112,7 @@ async function main$1() {
 				repo: github_1.repo.repo,
 				owner: github_1.repo.owner,
 				body,
-				sha: github_1.commit_sha
+				commit_sha: github_1.commit_sha
 			})
 		}
 	}
