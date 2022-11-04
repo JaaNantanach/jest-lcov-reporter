@@ -23134,7 +23134,7 @@ async function main$1() {
 				issue_number: github_1.payload.pull_request.number,
 			});
 		} else {
-			issueComments = await githubClient.repos.listComments({
+			issueComments = await githubClient.repos.listCommitComments({
 				repo: github_1.repo.repo,
 				owner: github_1.repo.owner,
 				number: github_1.issue.number,
