@@ -114,16 +114,6 @@ async function main() {
 	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
 	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
 	await fs.writeFile(pathSummary, body);
-
-	await githubClient.checks.create({
-		repo: context.repo.repo,
-		owner: context.repo.owner,
-		name: "Code Coverage Report",
-		head_sha: context.sha,
-		status: 'completed',
-		conclusion: 'success',
-		output
-	})
 }
 
 export default main().catch(function (err) {
