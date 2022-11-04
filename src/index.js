@@ -1,9 +1,10 @@
 import { promises as fs } from "fs"
-import core from "@actions/core"
-import { GitHub, context } from "@actions/github"
-
 import { parse } from "./lcov"
 import { commentIdentifier, diff } from "./comment"
+
+const github = require('@actions/github');
+const core = require('@actions/core');
+const context = github.context;
 
 async function main() {
 	const token = core.getInput("github-token")
@@ -25,33 +26,45 @@ async function main() {
 	}
 
 	const isPullRequest = Boolean(context.payload.pull_request)
-	if (!isPullRequest) {
-		console.log("Not a pull request, skipping...")
-		return
-	}
+	// if (!isPullRequest) {
+	// 	console.log("Not a pull request, skipping...")
+	// 	return
+	// }
 
 	const options = {
 		name,
 		repository: context.payload.repository.full_name,
-		commit: context.payload.pull_request.head.sha,
+		commitSHA: context.sha,
+		commitMessage: context.payload.head_commit.message,
 		prefix: `${process.env.GITHUB_WORKSPACE}/`,
-		head: context.payload.pull_request.head.ref,
-		base: context.payload.pull_request.base.ref,
+		head: isPullRequest ? context.payload.pull_request.head.ref : "",
+		base: isPullRequest ? context.payload.pull_request.base.ref : "",
 		workflowName: process.env.GITHUB_WORKFLOW,
+		isPullRequest: isPullRequest
 	}
 
 	const lcov = await parse(raw)
 	const baselcov = baseRaw && (await parse(baseRaw))
 	const body = await diff(lcov, baselcov, options)
-	const githubClient = new GitHub(token)
+	const githubClient = github.getOctokit(token)
 
-	const createGitHubComment = () =>
-		githubClient.issues.createComment({
-			repo: context.repo.repo,
-			owner: context.repo.owner,
-			issue_number: context.payload.pull_request.number,
-			body,
-		})
+	const createGitHubComment = () => {
+		if (isPullRequest) {
+			return githubClient.issues.createComment({
+				repo: context.repo.repo,
+				owner: context.repo.owner,
+				body,
+				issue_number: context.payload.pull_request.number,
+			});
+		} else {
+			return githubClient.repos.createCommitComment({
+				repo: context.repo.repo,
+				owner: context.repo.owner,
+				body,
+				commit_sha: context.sha
+			})
+		}
+	}
 
 	const updateGitHubComment = commentId =>
 		githubClient.issues.updateComment({
@@ -62,26 +75,54 @@ async function main() {
 		})
 
 	if (updateComment) {
-		const issueComments = await githubClient.issues.listComments({
-			repo: context.repo.repo,
-			owner: context.repo.owner,
-			issue_number: context.payload.pull_request.number,
-		})
+		let issueComments
+		if (isPullRequest) {
+			issueComments = await githubClient.issues.listComments({
+				repo: context.repo.repo,
+				owner: context.repo.owner,
+				issue_number: context.payload.pull_request.number,
+			});
+		} else {
+			issueComments = await githubClient.repos.listCommitComments({
+				repo: context.repo.repo,
+				owner: context.repo.owner,
+				number: context.issue.number,
+			});
+		}
 
 		const existingComment = issueComments.data.find(comment =>
 			comment.body.includes(commentIdentifier(options.workflowName)),
-		)
+		);
 
 		if (existingComment) {
-			await updateGitHubComment(existingComment.id)
+			if (isPullRequest) await updateGitHubComment(existingComment.id);
 			return
 		}
 	}
 
 	await createGitHubComment()
+
+	const output = {
+		title: "Code Coverage Report",
+		summary: body
+	}
+
+	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
+	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
+	fs.writeFileSync(pathSummary, body);
+
+	await githubClient.checks.create({
+		repo: context.repo.repo,
+		owner: context.repo.owner,
+		name: "Code Coverage Report",
+		head_sha: context.sha,
+		status: 'completed',
+		conclusion: 'success',
+		output
+	})
 }
 
-export default main().catch(function(err) {
+export default main().catch(function (err) {
 	console.log(err)
 	core.setFailed(err.message)
 })
