@@ -23176,8 +23176,8 @@ async function main$1() {
 	}
 
 	await githubClient.checks.create({
-		owner,
-		repo,
+		repo: github_1.repo.repo,
+		owner: github_1.repo.owner,
 		name,
 		head_sha: github_1.sha,
 		status: 'completed',
