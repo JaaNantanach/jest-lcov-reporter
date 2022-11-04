@@ -1,9 +1,9 @@
 import { promises as fs } from "fs"
 import { parse } from "./lcov"
 import { commentIdentifier, diff } from "./comment"
+import * as core from '@actions/core'
+import * as github from '@actions/github'
 
-const github = require('@actions/github');
-const core = require('@actions/core');
 const context = github.context;
 
 async function main() {
