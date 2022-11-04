@@ -87268,7 +87268,6 @@ getOctokit_1 = github.getOctokit = getOctokit;
 const context = context$1;
 
 async function main() {
-	console.log(JSON.stringify(context));
 	const token = coreExports.getInput("github-token");
 	const name = coreExports.getInput("name");
 	const lcovFile = coreExports.getInput("lcov-file") || "./coverage/lcov.info";
@@ -87310,6 +87309,10 @@ async function main() {
 	const body = await diff(lcov, baselcov, options);
 	const githubClient = getOctokit_1(token).rest;
 
+	console.log("repo", context.repo.repo);
+	console.log("owner", context.repo.owner);
+	console.log("commit_sha", context.sha);
+
 	const createGitHubComment = () => {
 		if (isPullRequest) {
 			return githubClient.issues.createComment({
@@ -87348,7 +87351,7 @@ async function main() {
 			issueComments = await githubClient.repos.listCommentsForCommit({
 				repo: context.repo.repo,
 				owner: context.repo.owner,
-				number: context.issue.number,
+				commit_sha: context.sha
 			});
 		}
 
