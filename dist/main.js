@@ -23018,7 +23018,8 @@ function heading(name) {
 function comment(lcov, table, options) {
 	return fragment(
 		heading(options.name),
-		p(`Coverage after merging ${b(options.head)} into ${b(options.base)}`),
+		options.isPullRequest ? p(`Coverage after merging ${b(options.head)} into ${b(options.base)}`)
+			: p(`Coverage on commit ${b(options.commit)} (${b(options.commitMessage)})`),
 		table,
 		"\n\n",
 		details(summary("Coverage Report"), tabulate(lcov, options)),
@@ -23087,11 +23088,13 @@ async function main$1() {
 	const options = {
 		name,
 		repository: github_1.payload.repository.full_name,
-		commit: isPullRequest ? github_1.payload.pull_request.head.sha : 'github_1.sha',
+		commitSHA: github_1.sha,
+		commitMessage: github_1.payload.head_commit.message,
 		prefix: `${process.env.GITHUB_WORKSPACE}/`,
 		head: isPullRequest ? github_1.payload.pull_request.head.ref : "",
 		base: isPullRequest ? github_1.payload.pull_request.base.ref : "",
 		workflowName: process.env.GITHUB_WORKFLOW,
+		isPullRequest: isPullRequest
 	};
 
 	const lcov = await parse$2(raw);
