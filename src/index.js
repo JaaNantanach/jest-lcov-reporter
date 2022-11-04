@@ -35,7 +35,7 @@ async function main() {
 		name,
 		repository: context.payload.repository.full_name,
 		commitSHA: context.sha,
-		commitMessage: context.payload.head_commit.message,
+		commitMessage: isPullRequest ? "" : context.payload.head_commit.message,
 		prefix: `${process.env.GITHUB_WORKSPACE}/`,
 		head: isPullRequest ? context.payload.pull_request.head.ref : "",
 		base: isPullRequest ? context.payload.pull_request.base.ref : "",
