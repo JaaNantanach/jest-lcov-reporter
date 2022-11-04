@@ -23171,14 +23171,14 @@ async function main$1() {
 	fs.writeFileSync(pathSummary, body);
 
 	const output = {
-		title: name,
-		text: body
+		title: "Code Coverage Report",
+		summary: body
 	}
 
 	await githubClient.checks.create({
 		repo: github_1.repo.repo,
 		owner: github_1.repo.owner,
-		name,
+		name: "Code Coverage Report",
 		head_sha: github_1.sha,
 		status: 'completed',
 		conclusion: 'success',
