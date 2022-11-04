@@ -23112,18 +23112,28 @@ async function main$1() {
 				repo: github_1.repo.repo,
 				owner: github_1.repo.owner,
 				body,
-				sha: github_1.sha
+				sha: github_1.commit_sha
 			})
 		}
 	}
 
-	const updateGitHubComment = commentId =>
-		githubClient.issues.updateComment({
-			repo: github_1.repo.repo,
-			owner: github_1.repo.owner,
-			comment_id: commentId,
-			body,
-		});
+	const updateGitHubComment = commentId => {
+		if (isPullRequest) {
+			return githubClient.issues.updateComment({
+				repo: github_1.repo.repo,
+				owner: github_1.repo.owner,
+				comment_id: commentId,
+				body,
+			});
+		} else {
+			return githubClient.repos.updateCommitComment({
+				repo: github_1.repo.repo,
+				owner: github_1.repo.owner,
+				comment_id: commentId,
+				body
+			})
+		}
+	}
 
 	if (updateComment) {
 		let issueComments
