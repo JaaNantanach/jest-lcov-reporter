@@ -23126,11 +23126,20 @@ async function main$1() {
 		});
 
 	if (updateComment) {
-		const issueComments = await githubClient.issues.listComments({
-			repo: github_1.repo.repo,
-			owner: github_1.repo.owner,
-			issue_number: github_1.payload.pull_request.number,
-		});
+		let issueComments
+		if (isPullRequest) {
+			issueComments = await githubClient.issues.listComments({
+				repo: github_1.repo.repo,
+				owner: github_1.repo.owner,
+				issue_number: github_1.payload.pull_request.number,
+			});
+		} else {
+			issueComments = await githubClient.repos.listComments({
+				repo: github_1.repo.repo,
+				owner: github_1.repo.owner,
+				number: github_1.issue.number,
+			});
+		}
 
 		const existingComment = issueComments.data.find(comment =>
 			comment.body.includes(commentIdentifier(options.workflowName)),
