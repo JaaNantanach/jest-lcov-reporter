@@ -23166,16 +23166,13 @@ async function main$1() {
 
 	await createGitHubComment();
 
-	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
-	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
-	fs.writeFileSync(pathSummary, body);
-
+	
 	const output = {
 		title: "Code Coverage Report",
 		summary: body
 	}
-
-	await githubClient.checks.create({
+	
+	const check = await githubClient.checks.create({
 		repo: github_1.repo.repo,
 		owner: github_1.repo.owner,
 		name: "Code Coverage Report",
@@ -23184,6 +23181,10 @@ async function main$1() {
 		conclusion: 'success',
 		output
 	})
+
+	console.log("GITHUB_STEP_SUMMARY", process.env["GITHUB_STEP_SUMMARY"])
+	const pathSummary = process.env["GITHUB_STEP_SUMMARY"]
+	fs.writeFileSync(pathSummary, check + body);
 }
 
 var index = main$1().catch(function (err) {
